@@ -7,10 +7,10 @@ public class Main {
 
     public static void main(String[] args) {
         PrimeRandomNumberGenerator generator = new PrimeRandomNumberGenerator();
-        ArrayList<BigInteger> primes = generator.getPrimes(2, 1024);
+        ArrayList<BigInteger> primes = generator.getPrimes(10, 1024);
 
         for (BigInteger integer : primes) {
-            System.out.println(integer.toString());
+            System.out.println(integer.abs().toString());
         }
 
     }
