@@ -1,7 +1,6 @@
 package com.marian;
 
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
@@ -10,10 +9,10 @@ import java.util.concurrent.CountDownLatch;
  */
 public class PrimeRandomNumberGenerator {
 
-    private SecureRandom randomGenerator;
+    private MySecureRandom randomGenerator;
 
     public ArrayList<BigInteger> getPrimes(int numberOfPrimes, int bitLength) {
-        randomGenerator = new SecureRandom();
+        randomGenerator = new MySecureRandom();
         CountDownLatch doneSignal = new CountDownLatch(numberOfPrimes);
         ArrayList<PrimeNumberWorker> workers = createWorkers(numberOfPrimes, bitLength, doneSignal);
         startWork(workers);

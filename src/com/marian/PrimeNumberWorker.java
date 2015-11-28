@@ -1,7 +1,6 @@
 package com.marian;
 
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -14,12 +13,12 @@ public class PrimeNumberWorker extends Thread {
     private static final BigInteger TWO = new BigInteger("2");
     private static final BigInteger ZERO = new BigInteger("0");
     private final CountDownLatch doneSignal;
-    private final SecureRandom randomGenerator;
+    private final MySecureRandom randomGenerator;
     private final int bitLength;
     private final int numberOfTests;
     public BigInteger prime;
 
-    public PrimeNumberWorker(CountDownLatch doneSignal, SecureRandom randomGenerator, int bitLength) {
+    public PrimeNumberWorker(CountDownLatch doneSignal, MySecureRandom randomGenerator, int bitLength) {
         this.doneSignal = doneSignal;
         this.randomGenerator = randomGenerator;
         this.bitLength = bitLength;
@@ -56,7 +55,7 @@ public class PrimeNumberWorker extends Thread {
             d = d.divide(TWO);
         }
         for (int i = 0; i < k; i++) {
-            BigInteger a = uniformRandom(TWO, n.subtract(ONE));
+            BigInteger a = randomGenerator.uniformRandom(TWO, n.subtract(ONE));
             BigInteger x = a.modPow(d, n);
             if (x.equals(ONE) || x.equals(n.subtract(ONE)))
                 continue;
@@ -74,11 +73,4 @@ public class PrimeNumberWorker extends Thread {
         return true;
     }
 
-    private BigInteger uniformRandom(BigInteger bottom, BigInteger top) {
-        BigInteger res;
-        do {
-            res = new BigInteger(top.bitLength(), randomGenerator);
-        } while (res.compareTo(bottom) < 0 || res.compareTo(top) > 0);
-        return res;
-    }
 }

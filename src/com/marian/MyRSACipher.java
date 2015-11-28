@@ -7,10 +7,13 @@ import java.util.ArrayList;
  * Created by marian on 28.11.2015.
  */
 public class MyRSACipher {
-    private final PrimeRandomNumberGenerator generator;
+    private static final BigInteger TWO = new BigInteger("2");
+    private final PrimeRandomNumberGenerator primeGenerator;
+    private final MySecureRandom randomGenrator;
 
     public MyRSACipher(PrimeRandomNumberGenerator generator) {
-        this.generator = generator;
+        this.primeGenerator = generator;
+        this.randomGenrator = new MySecureRandom();
     }
 
     public void generateKeys(int keyLength) {
@@ -23,8 +26,14 @@ public class MyRSACipher {
     }
 
     private BigInteger getCoprimeNumber(BigInteger number) {
+        BigInteger halfLengthNumber = new BigInteger(number.bitLength()/4, randomGenrator);
 
-        return null;
+        BigInteger aNumber;
+        do {
+            aNumber = randomGenrator.uniformRandomWithRandomLength(TWO, halfLengthNumber);
+        } while (!aNumber.gcd(number).equals(BigInteger.ONE));
+
+        return aNumber;
     }
 
     private BigInteger phi(BigInteger p, BigInteger q) {
@@ -38,7 +47,7 @@ public class MyRSACipher {
 
         ArrayList<BigInteger> primeNumbers;
         do {
-            primeNumbers = generator.getPrimes(2, keyLength);
+            primeNumbers = primeGenerator.getPrimes(2, keyLength);
         } while (primeNumbers.get(0).equals(primeNumbers.get(1)));
 
         return primeNumbers;
