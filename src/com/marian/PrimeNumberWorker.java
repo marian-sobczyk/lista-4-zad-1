@@ -16,12 +16,14 @@ public class PrimeNumberWorker extends Thread {
     private final CountDownLatch doneSignal;
     private final SecureRandom randomGenerator;
     private final int bitLength;
+    private final int numberOfTests;
     public BigInteger prime;
 
     public PrimeNumberWorker(CountDownLatch doneSignal, SecureRandom randomGenerator, int bitLength) {
         this.doneSignal = doneSignal;
         this.randomGenerator = randomGenerator;
         this.bitLength = bitLength;
+        this.numberOfTests = (bitLength - 1) / 2 + 1;
     }
 
     @Override
@@ -37,17 +39,11 @@ public class PrimeNumberWorker extends Thread {
                 continue;
             }
 
-            done = isProbablePrime(numberToTest, bitLength);
+            done = isProbablePrime(numberToTest, numberOfTests);
         }
 
         prime = numberToTest;
         doneSignal.countDown();
-    }
-
-    private BigInteger getRandomBigInteger() {
-        byte[] bytes = new byte[bitLength / 8];
-        randomGenerator.nextBytes(bytes);
-        return new BigInteger(bytes);
     }
 
     private boolean isProbablePrime(BigInteger n, int k) {
@@ -72,7 +68,7 @@ public class PrimeNumberWorker extends Thread {
                 if (x.equals(n.subtract(ONE)))
                     break;
             }
-            if (r == s) // None of the steps made x equal n-1.
+            if (r == s)
                 return false;
         }
         return true;
