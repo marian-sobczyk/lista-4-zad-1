@@ -10,6 +10,8 @@ public class MyRSACipher {
     private static final BigInteger TWO = new BigInteger("2");
     private final PrimeRandomNumberGenerator primeGenerator;
     private final MySecureRandom randomGenrator;
+    private MyRSAKey privateKey;
+    private MyRSAKey publicKey;
 
     public MyRSACipher(PrimeRandomNumberGenerator generator) {
         this.primeGenerator = generator;
@@ -23,10 +25,13 @@ public class MyRSACipher {
         BigInteger n = p.multiply(q);
         BigInteger phi = phi(p, q);
         BigInteger e = getCoprimeNumber(phi);
+        BigInteger d = EquationSolver.modularLinearEquation(e, BigInteger.ONE, phi);
+        publicKey = new MyRSAKey(e, n, MyKeyType.PublicKey);
+        privateKey = new MyRSAKey(d, n, MyKeyType.PrivateKey);
     }
 
     private BigInteger getCoprimeNumber(BigInteger number) {
-        BigInteger halfLengthNumber = new BigInteger(number.bitLength()/4, randomGenrator);
+        BigInteger halfLengthNumber = new BigInteger(number.bitLength()/2, randomGenrator);
 
         BigInteger aNumber;
         do {
