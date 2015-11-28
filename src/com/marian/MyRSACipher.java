@@ -25,4 +25,9 @@ public class MyRSACipher implements MyRSACipherDelegate {
     public void setPrivateKey(MyRSAKey privateKey) {
         this.privateKey = privateKey;
     }
+
+    public void saveKeys(String path) {
+        privateKey.saveKey(path);
+        publicKey.saveKey(path);
+    }
 }

@@ -1,5 +1,7 @@
 package com.marian;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 
 /**
@@ -15,5 +17,21 @@ public class MyRSAKey {
         this.value = value;
         this.n = n;
         this.keyType = keyType;
+    }
+
+    public void saveKey(String path) {
+        try {
+            PrintWriter out = new PrintWriter(path + "/" + getName());
+            out.println(value.toString());
+            out.println(n.toString());
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String getName() {
+        return keyType == MyKeyType.PrivateKey ? "private.key" : "public.key";
     }
 }

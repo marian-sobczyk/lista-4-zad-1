@@ -6,6 +6,7 @@ public class Main {
         PrimeRandomNumberGenerator generator = new PrimeRandomNumberGenerator();
         MyRSACipher cipher = new MyRSACipher(generator);
         cipher.generateKeys(1024);
+        cipher.saveKeys("/Users/marian/Desktop");
     }
     
 }
