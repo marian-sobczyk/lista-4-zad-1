@@ -19,10 +19,13 @@ public class PrimeNumberWorker extends Thread {
     public BigInteger prime;
 
     public PrimeNumberWorker(CountDownLatch doneSignal, MySecureRandom randomGenerator, int bitLength) {
+        int numberOfTests1;
         this.doneSignal = doneSignal;
         this.randomGenerator = randomGenerator;
         this.bitLength = bitLength;
-        this.numberOfTests = (bitLength - 1) / 2 + 1;
+        numberOfTests1 = (bitLength) / 2 + 1;
+        numberOfTests1 = numberOfTests1 > 100 ? numberOfTests1 : 100;
+        this.numberOfTests = numberOfTests1;
     }
 
     @Override
