@@ -1,5 +1,7 @@
 package com.marian;
 
+import java.io.IOException;
+
 /**
  * Created by marian on 28.11.2015.
  */
@@ -29,5 +31,14 @@ public class MyRSACipher implements MyRSACipherDelegate {
     public void saveKeys(String path) {
         privateKey.saveKey(path);
         publicKey.saveKey(path);
+    }
+
+    public void openKeys(String path) {
+        try {
+            privateKey = new MyRSAKey(path, MyKeyType.PrivateKey);
+            publicKey = new MyRSAKey(path, MyKeyType.PublicKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

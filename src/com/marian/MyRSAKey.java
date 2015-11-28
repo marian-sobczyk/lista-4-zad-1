@@ -1,7 +1,6 @@
 package com.marian;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigInteger;
 
 /**
@@ -17,6 +16,16 @@ public class MyRSAKey {
         this.value = value;
         this.n = n;
         this.keyType = keyType;
+    }
+
+    public MyRSAKey(String path, MyKeyType keyType) throws IOException {
+        this.keyType = keyType;
+        BufferedReader in = new BufferedReader(new FileReader(path + "/" + getName()));
+        String line = in.readLine();
+        value = new BigInteger(line);
+        line = in.readLine();
+        n = new BigInteger(line);
+        in.close();
     }
 
     public void saveKey(String path) {
