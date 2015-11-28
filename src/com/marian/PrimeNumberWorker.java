@@ -37,8 +37,7 @@ public class PrimeNumberWorker extends Thread {
                 continue;
             }
 
-//            done = isProbablePrime(numberToTest, bitLength * 2);
-            done = numberToTest.isProbablePrime(bitLength);
+            done = isProbablePrime(numberToTest, bitLength);
         }
 
         prime = numberToTest;
