@@ -47,4 +47,16 @@ public class MyRSAKey {
     private String getName() {
         return keyType == MyKeyType.PrivateKey ? "private.key" : "public.key";
     }
+
+    public int numberOfFactors() {
+        return this.factors.size();
+    }
+
+    public BigInteger reversedFactor(int i) {
+        return this.reversedFactor(i);
+    }
+
+    public BigInteger factor(int i) {
+        return this.factors.get(i);
+    }
 }

@@ -6,6 +6,8 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by marian on 28.11.2015.
@@ -69,6 +71,27 @@ public class MyRSACipher implements MyRSACipherDelegate {
     public void decode(String sourcePath, String destinationPath) throws IOException {
         BigInteger M = getMessageInteger(sourcePath);
         M = M.modPow(privateKey.value, privateKey.n);
+        saveOutput(destinationPath, M);
+    }
+
+    public void CRTencode(String sourcePath, String destinationPath) throws IOException, InterruptedException {
+        BigInteger M = getMessageInteger(sourcePath);
+        ArrayList<MyRSACRTWorker> workers = new ArrayList<MyRSACRTWorker>();
+        CountDownLatch doneSignal = new CountDownLatch(this.publicKey.numberOfFactors());
+        for (int i = 0; i < this.publicKey.numberOfFactors(); i++) {
+            workers.add(new MyRSACRTWorker(M, this.publicKey.factor(i), this.publicKey.value, this.publicKey.n, doneSignal));
+        }
+        for (MyRSACRTWorker worker : workers) {
+            worker.start();
+        }
+        doneSignal.await();
+        M = BigInteger.ZERO;
+        for (MyRSACRTWorker worker : workers) {
+            M = M.add(worker.partOfMessage.multiply(worker.valueToSum));
+        }
+        while (M.compareTo(BigInteger.ZERO) < 0) {
+            M = M.add(publicKey.n);
+        }
         saveOutput(destinationPath, M);
     }
 }
