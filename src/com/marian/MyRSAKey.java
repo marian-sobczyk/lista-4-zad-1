@@ -2,6 +2,7 @@ package com.marian;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 /**
  * Created by marian on 29.11.2015.
@@ -11,11 +12,13 @@ public class MyRSAKey {
     public final BigInteger value;
     public final BigInteger n;
     private final MyKeyType keyType;
+    private final ArrayList<BigInteger> factors;
 
-    public MyRSAKey(BigInteger value, BigInteger n, MyKeyType keyType) {
+    public MyRSAKey(BigInteger value, BigInteger n, MyKeyType keyType, ArrayList<BigInteger> factors) {
         this.value = value;
         this.n = n;
         this.keyType = keyType;
+        this.factors = factors;
     }
 
     public MyRSAKey(String path, MyKeyType keyType) throws IOException {
@@ -26,6 +29,7 @@ public class MyRSAKey {
         line = in.readLine();
         n = new BigInteger(line);
         in.close();
+        factors = null;
     }
 
     public void saveKey(String path) {

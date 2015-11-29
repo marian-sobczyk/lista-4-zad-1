@@ -16,8 +16,8 @@ public class MyRSAKeysGenerator {
         BigInteger phi = phi(bigPrimeNumbers);
         BigInteger e = getCoprimeNumber(phi, randomGenrator);
         BigInteger d = EquationSolver.modularLinearEquation(e, BigInteger.ONE, phi);
-        delegate.setPublicKey(new MyRSAKey(e, n, MyKeyType.PublicKey));
-        delegate.setPrivateKey(new MyRSAKey(d, n, MyKeyType.PrivateKey));
+        delegate.setPublicKey(new MyRSAKey(e, n, MyKeyType.PublicKey, bigPrimeNumbers));
+        delegate.setPrivateKey(new MyRSAKey(d, n, MyKeyType.PrivateKey, bigPrimeNumbers));
     }
 
     private static BigInteger phi(ArrayList<BigInteger> bigPrimeNumbers) {
