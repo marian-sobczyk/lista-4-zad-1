@@ -63,7 +63,7 @@ public class MyRSAKeysGenerator {
         BigInteger aNumber;
         do {
             aNumber = randomGenrator.uniformRandomWithRandomLength(TWO, halfLengthNumber);
-        } while (!aNumber.gcd(number).equals(BigInteger.ONE));
+        } while (!(aNumber.gcd(number).equals(BigInteger.ONE) && aNumber.mod(TWO).equals(BigInteger.ONE)));
 
         return aNumber;
     }
