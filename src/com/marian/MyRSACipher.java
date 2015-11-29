@@ -89,9 +89,26 @@ public class MyRSACipher implements MyRSACipherDelegate {
         for (MyRSACRTWorker worker : workers) {
             M = M.add(worker.partOfMessage.multiply(worker.valueToSum));
         }
-        while (M.compareTo(BigInteger.ZERO) < 0) {
-            M = M.add(publicKey.n);
+        M = M.mod(privateKey.n);
+        saveOutput(destinationPath, M);
+    }
+
+    public void CRTdecode(String sourcePath, String destinationPath) throws IOException, InterruptedException {
+        BigInteger M = getMessageInteger(sourcePath);
+        ArrayList<MyRSACRTWorker> workers = new ArrayList<MyRSACRTWorker>();
+        CountDownLatch doneSignal = new CountDownLatch(this.privateKey.numberOfFactors());
+        for (int i = 0; i < this.privateKey.numberOfFactors(); i++) {
+            workers.add(new MyRSACRTWorker(M, this.privateKey.factor(i), this.privateKey.value, this.privateKey.n, doneSignal));
         }
+        for (MyRSACRTWorker worker : workers) {
+            worker.start();
+        }
+        doneSignal.await();
+        M = BigInteger.ZERO;
+        for (MyRSACRTWorker worker : workers) {
+            M = M.add(worker.partOfMessage.multiply(worker.valueToSum));
+        }
+        M = M.mod(privateKey.n);
         saveOutput(destinationPath, M);
     }
 }

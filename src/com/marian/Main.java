@@ -11,7 +11,7 @@ public class Main {
 //        cipher.openKeys("/Users/marian/Desktop");
         try {
             cipher.CRTencode("/Users/marian/Desktop/test.txt", "/Users/marian/Desktop/test2.txt");
-            cipher.decode("/Users/marian/Desktop/test2.txt", "/Users/marian/Desktop/test3.txt");
+            cipher.CRTdecode("/Users/marian/Desktop/test2.txt", "/Users/marian/Desktop/test3.txt");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
