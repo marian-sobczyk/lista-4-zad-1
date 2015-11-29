@@ -9,25 +9,50 @@ import java.util.ArrayList;
 public class MyRSAKeysGenerator {
     private static final BigInteger TWO = new BigInteger("2");
 
-    public static void generateKeys(int keyLength, PrimeRandomNumberGenerator primeGenerator, MyRSACipherDelegate delegate) {
-        ArrayList<BigInteger> bigPrimeNumbers = generateInequalBigPrimeNumbers(keyLength, primeGenerator);
+    public static void generateKeys(int keyLength, int numberOfFactors, PrimeRandomNumberGenerator primeGenerator, MyRSACipherDelegate delegate) {
+        ArrayList<BigInteger> bigPrimeNumbers = generateInequalBigPrimeNumbers(keyLength, numberOfFactors, primeGenerator);
         MySecureRandom randomGenrator = new MySecureRandom();
-        BigInteger p = bigPrimeNumbers.get(0);
-        BigInteger q = bigPrimeNumbers.get(1);
-        BigInteger n = p.multiply(q);
-        BigInteger phi = phi(p, q);
+        BigInteger n = generateFactor(bigPrimeNumbers);
+        BigInteger phi = phi(bigPrimeNumbers);
         BigInteger e = getCoprimeNumber(phi, randomGenrator);
         BigInteger d = EquationSolver.modularLinearEquation(e, BigInteger.ONE, phi);
         delegate.setPublicKey(new MyRSAKey(e, n, MyKeyType.PublicKey));
         delegate.setPrivateKey(new MyRSAKey(d, n, MyKeyType.PrivateKey));
     }
 
-    private static ArrayList<BigInteger> generateInequalBigPrimeNumbers(int keyLength, PrimeRandomNumberGenerator primeGenerator) {
+    private static BigInteger phi(ArrayList<BigInteger> bigPrimeNumbers) {
+        BigInteger value = BigInteger.ONE;
+        for (BigInteger number : bigPrimeNumbers) {
+            BigInteger tempNumber = number.subtract(BigInteger.ONE);
+            value = value.multiply(tempNumber);
+        }
+
+        return value;
+    }
+
+    private static BigInteger generateFactor(ArrayList<BigInteger> bigPrimeNumbers) {
+        BigInteger value = BigInteger.ONE;
+        for (BigInteger number : bigPrimeNumbers) {
+            value = value.multiply(number);
+        }
+
+        return value;
+    }
+
+    private static ArrayList<BigInteger> generateInequalBigPrimeNumbers(int keyLength, int numberOfFactors, PrimeRandomNumberGenerator primeGenerator) {
 
         ArrayList<BigInteger> primeNumbers;
+        boolean done = false;
         do {
-            primeNumbers = primeGenerator.getPrimes(2, keyLength);
-        } while (primeNumbers.get(0).equals(primeNumbers.get(1)));
+            primeNumbers = primeGenerator.getPrimes(numberOfFactors, keyLength);
+            ArrayList<BigInteger> tempPrimeNumbers = (ArrayList<BigInteger>) primeNumbers.clone();
+            for (BigInteger number : primeNumbers) {
+                tempPrimeNumbers.remove(number);
+            }
+            if (tempPrimeNumbers.size() == 0) {
+                done = true;
+            }
+        } while (!done);
 
         return primeNumbers;
     }
@@ -43,10 +68,4 @@ public class MyRSAKeysGenerator {
         return aNumber;
     }
 
-    private static BigInteger phi(BigInteger p, BigInteger q) {
-        BigInteger p1 = p.subtract(BigInteger.ONE);
-        BigInteger q1 = q.subtract(BigInteger.ONE);
-
-        return p1.multiply(q1);
-    }
 }

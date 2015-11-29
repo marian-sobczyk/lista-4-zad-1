@@ -21,8 +21,8 @@ public class MyRSACipher implements MyRSACipherDelegate {
         this.primeGenerator = generator;
     }
 
-    public void generateKeys(int keyLength) {
-        MyRSAKeysGenerator.generateKeys(keyLength, primeGenerator, this);
+    public void generateKeys(int keyLength, int numberOfFactors) {
+        MyRSAKeysGenerator.generateKeys(keyLength, numberOfFactors, primeGenerator, this);
     }
 
     @Override
