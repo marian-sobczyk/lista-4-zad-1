@@ -8,8 +8,8 @@ import java.math.BigInteger;
  */
 public class MyRSAKey {
 
-    private final BigInteger value;
-    private final BigInteger n;
+    public final BigInteger value;
+    public final BigInteger n;
     private final MyKeyType keyType;
 
     public MyRSAKey(BigInteger value, BigInteger n, MyKeyType keyType) {

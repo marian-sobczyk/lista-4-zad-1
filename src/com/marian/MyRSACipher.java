@@ -1,6 +1,13 @@
 package com.marian;
 
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Created by marian on 28.11.2015.
@@ -40,5 +47,27 @@ public class MyRSACipher implements MyRSACipherDelegate {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void encode(String sourcePath, String destinationPath) throws IOException {
+        Path inputPath = Paths.get(sourcePath);
+        byte[] inputData = Files.readAllBytes(inputPath);
+        BigInteger M = new BigInteger(inputData);
+        M = M.modPow(publicKey.value, publicKey.n);
+        byte[] outputData = M.toByteArray();
+        FileOutputStream fos = new FileOutputStream(destinationPath);
+        fos.write(outputData);
+        fos.close();
+    }
+
+    public void decode(String sourcePath, String destinationPath) throws IOException {
+        Path inputPath = Paths.get(sourcePath);
+        byte[] inputData = Files.readAllBytes(inputPath);
+        BigInteger M = new BigInteger(inputData);
+        M = M.modPow(privateKey.value, privateKey.n);
+        byte[] outputData = M.toByteArray();
+        FileOutputStream fos = new FileOutputStream(destinationPath);
+        fos.write(outputData);
+        fos.close();
     }
 }
