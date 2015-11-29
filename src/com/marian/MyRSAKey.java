@@ -28,8 +28,14 @@ public class MyRSAKey {
         value = new BigInteger(line);
         line = in.readLine();
         n = new BigInteger(line);
+        line = in.readLine();
+        factors = new ArrayList<BigInteger>();
+        while (line != null) {
+            BigInteger factor = new BigInteger(line);
+            factors.add(factor);
+            line = in.readLine();
+        }
         in.close();
-        factors = null;
     }
 
     public void saveKey(String path) {
@@ -53,10 +59,6 @@ public class MyRSAKey {
 
     public int numberOfFactors() {
         return this.factors.size();
-    }
-
-    public BigInteger reversedFactor(int i) {
-        return this.reversedFactor(i);
     }
 
     public BigInteger factor(int i) {
