@@ -37,6 +37,9 @@ public class MyRSAKey {
             PrintWriter out = new PrintWriter(path + "/" + getName());
             out.println(value.toString());
             out.println(n.toString());
+            for (BigInteger integer : factors) {
+                out.println(integer.toString());
+            }
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
