@@ -50,24 +50,27 @@ public class MyRSACipher implements MyRSACipherDelegate {
     }
 
     public void encode(String sourcePath, String destinationPath) throws IOException {
-        Path inputPath = Paths.get(sourcePath);
-        byte[] inputData = Files.readAllBytes(inputPath);
-        BigInteger M = new BigInteger(inputData);
+        BigInteger M = getMessageInteger(sourcePath);
         M = M.modPow(publicKey.value, publicKey.n);
-        byte[] outputData = M.toByteArray();
+        saveOutput(destinationPath, M);
+    }
+
+    private void saveOutput(String destinationPath, BigInteger m) throws IOException {
+        byte[] outputData = m.toByteArray();
         FileOutputStream fos = new FileOutputStream(destinationPath);
         fos.write(outputData);
         fos.close();
     }
 
-    public void decode(String sourcePath, String destinationPath) throws IOException {
+    private BigInteger getMessageInteger(String sourcePath) throws IOException {
         Path inputPath = Paths.get(sourcePath);
         byte[] inputData = Files.readAllBytes(inputPath);
-        BigInteger M = new BigInteger(inputData);
+        return new BigInteger(inputData);
+    }
+
+    public void decode(String sourcePath, String destinationPath) throws IOException {
+        BigInteger M = getMessageInteger(sourcePath);
         M = M.modPow(privateKey.value, privateKey.n);
-        byte[] outputData = M.toByteArray();
-        FileOutputStream fos = new FileOutputStream(destinationPath);
-        fos.write(outputData);
-        fos.close();
+        saveOutput(destinationPath, M);
     }
 }
