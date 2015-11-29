@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         PrimeRandomNumberGenerator generator = new PrimeRandomNumberGenerator();
         MyRSACipher cipher = new MyRSACipher(generator);
-        cipher.generateKeys(256, 8);
+//        cipher.generateKeys(256, 8);
         cipher.openKeys("/Users/marian/Desktop");
         try {
             cipher.CRTencode("/Users/marian/Desktop/test.txt", "/Users/marian/Desktop/test2.txt");

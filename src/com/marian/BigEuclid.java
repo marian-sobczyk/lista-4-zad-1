@@ -11,7 +11,7 @@ public class BigEuclid {
     private final BigInteger x;
     private final BigInteger y;
 
-    BigEuclid(BigInteger d, BigInteger x, BigInteger y) {
+    private BigEuclid(BigInteger d, BigInteger x, BigInteger y) {
         this.d = d;
         this.x = x;
         this.y = y;

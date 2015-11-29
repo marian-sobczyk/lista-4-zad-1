@@ -76,39 +76,47 @@ public class MyRSACipher implements MyRSACipherDelegate {
 
     public void CRTencode(String sourcePath, String destinationPath) throws IOException, InterruptedException {
         BigInteger M = getMessageInteger(sourcePath);
-        ArrayList<MyRSACRTWorker> workers = new ArrayList<MyRSACRTWorker>();
-        CountDownLatch doneSignal = new CountDownLatch(this.publicKey.numberOfFactors());
-        for (int i = 0; i < this.publicKey.numberOfFactors(); i++) {
-            workers.add(new MyRSACRTWorker(M, this.publicKey.factor(i), this.publicKey.value, this.publicKey.n, doneSignal));
-        }
-        for (MyRSACRTWorker worker : workers) {
-            worker.start();
-        }
+        CountDownLatch doneSignal = new CountDownLatch(publicKey.numberOfFactors());
+        MyRSAKey publicKey = this.publicKey;
+        ArrayList<MyRSACRTWorker> workers = createWorkers(M, publicKey, doneSignal);
+        startWorkers(workers);
         doneSignal.await();
+        M = getMessage(workers);
+        saveOutput(destinationPath, M);
+    }
+
+    private BigInteger getMessage(ArrayList<MyRSACRTWorker> workers) {
+        BigInteger M;
         M = BigInteger.ZERO;
         for (MyRSACRTWorker worker : workers) {
-            M = M.add(worker.partOfMessage.multiply(worker.valueToSum));
+            M = M.add(worker.valueToSum);
         }
         M = M.mod(privateKey.n);
-        saveOutput(destinationPath, M);
+        return M;
     }
 
     public void CRTdecode(String sourcePath, String destinationPath) throws IOException, InterruptedException {
         BigInteger M = getMessageInteger(sourcePath);
-        ArrayList<MyRSACRTWorker> workers = new ArrayList<MyRSACRTWorker>();
-        CountDownLatch doneSignal = new CountDownLatch(this.privateKey.numberOfFactors());
-        for (int i = 0; i < this.privateKey.numberOfFactors(); i++) {
-            workers.add(new MyRSACRTWorker(M, this.privateKey.factor(i), this.privateKey.value, this.privateKey.n, doneSignal));
-        }
+        MyRSAKey privateKey = this.privateKey;
+        CountDownLatch doneSignal = new CountDownLatch(privateKey.numberOfFactors());
+        ArrayList<MyRSACRTWorker> workers = createWorkers(M, privateKey, doneSignal);
+        startWorkers(workers);
+        doneSignal.await();
+        M = getMessage(workers);
+        saveOutput(destinationPath, M);
+    }
+
+    private void startWorkers(ArrayList<MyRSACRTWorker> workers) {
         for (MyRSACRTWorker worker : workers) {
             worker.start();
         }
-        doneSignal.await();
-        M = BigInteger.ZERO;
-        for (MyRSACRTWorker worker : workers) {
-            M = M.add(worker.partOfMessage.multiply(worker.valueToSum));
+    }
+
+    private ArrayList<MyRSACRTWorker> createWorkers(BigInteger m, MyRSAKey key, CountDownLatch doneSignal) {
+        ArrayList<MyRSACRTWorker> workers = new ArrayList<MyRSACRTWorker>();
+        for (int i = 0; i < key.numberOfFactors(); i++) {
+            workers.add(new MyRSACRTWorker(m, key.factor(i), key.value, key.n, doneSignal));
         }
-        M = M.mod(privateKey.n);
-        saveOutput(destinationPath, M);
+        return workers;
     }
 }

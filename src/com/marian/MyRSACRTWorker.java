@@ -13,7 +13,6 @@ public class MyRSACRTWorker extends Thread {
     private final CountDownLatch doneSignal;
     private final BigInteger key;
     private final BigInteger n;
-    public BigInteger partOfMessage;
     public BigInteger valueToSum;
 
     public MyRSACRTWorker(BigInteger message, BigInteger factor, BigInteger keyValue, BigInteger n, CountDownLatch doneSignal) {
@@ -27,10 +26,10 @@ public class MyRSACRTWorker extends Thread {
     @Override
     public void run() {
         BigInteger reversedFactor = key.mod(factor.subtract(BigInteger.ONE));
-        partOfMessage = message.modPow(reversedFactor, factor);
+        BigInteger partOfMessage = message.modPow(reversedFactor, factor);
         BigInteger ni = n.divide(factor);
         BigEuclid euclid = BigEuclid.extendedEuclid(factor, ni);
-        valueToSum = euclid.getY().multiply(ni);
+        valueToSum = euclid.getY().multiply(ni).multiply(partOfMessage);
         doneSignal.countDown();
     }
 }
