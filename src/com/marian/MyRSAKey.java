@@ -23,7 +23,7 @@ public class MyRSAKey {
 
     public MyRSAKey(String path, MyKeyType keyType) throws IOException {
         this.keyType = keyType;
-        BufferedReader in = new BufferedReader(new FileReader(path + "/" + getName()));
+        BufferedReader in = new BufferedReader(new FileReader(path));
         String line = in.readLine();
         value = new BigInteger(line);
         line = in.readLine();

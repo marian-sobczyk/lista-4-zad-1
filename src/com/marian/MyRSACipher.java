@@ -81,17 +81,17 @@ public class MyRSACipher implements MyRSACipherDelegate {
         ArrayList<MyRSACRTWorker> workers = createWorkers(M, publicKey, doneSignal);
         startWorkers(workers);
         doneSignal.await();
-        M = getMessage(workers);
+        M = getMessage(workers, publicKey);
         saveOutput(destinationPath, M);
     }
 
-    private BigInteger getMessage(ArrayList<MyRSACRTWorker> workers) {
+    private BigInteger getMessage(ArrayList<MyRSACRTWorker> workers, MyRSAKey key) {
         BigInteger M;
         M = BigInteger.ZERO;
         for (MyRSACRTWorker worker : workers) {
             M = M.add(worker.valueToSum);
         }
-        M = M.mod(privateKey.n);
+        M = M.mod(key.n);
         return M;
     }
 
@@ -102,7 +102,7 @@ public class MyRSACipher implements MyRSACipherDelegate {
         ArrayList<MyRSACRTWorker> workers = createWorkers(M, privateKey, doneSignal);
         startWorkers(workers);
         doneSignal.await();
-        M = getMessage(workers);
+        M = getMessage(workers, privateKey);
         saveOutput(destinationPath, M);
     }
 
@@ -118,5 +118,13 @@ public class MyRSACipher implements MyRSACipherDelegate {
             workers.add(new MyRSACRTWorker(m, key.factor(i), key.value, key.n, doneSignal));
         }
         return workers;
+    }
+
+    public void openPublicKey(String keyPath) throws IOException {
+        publicKey = new MyRSAKey(keyPath, MyKeyType.PublicKey);
+    }
+
+    public void openPrivateKey(String keyPath) throws IOException {
+        privateKey = new MyRSAKey(keyPath, MyKeyType.PrivateKey);
     }
 }
